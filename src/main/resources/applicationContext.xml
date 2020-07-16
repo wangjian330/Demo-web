@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
+                        http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--本xml为mybatis层框架：作用是链接jdbc及spring的配置-->
+
+    <!--声明 通过annotation注解将Service的生命周期纳入spring的管理-->
+    <context:annotation-config />
+    <context:component-scan base-package="com.service" />
+    <!-- 配置数据源:数据库-->
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+     destroy-method="close">
+
+<!--        基本属性-->
+        <property name="url" value="jdbc:mysql://localhost:3306/gt?characterEncoding=UTF-8"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <!--配置初始化大小 最大 最小-->
+        <property name="initialSize" value="3" />
+        <property name="minIdle" value="3" />
+        <property name="maxActive" value="20" />
+        <!--配置获取连接等待超时的时间-->
+        <property name="maxWait" value="60000" />
+        <!--配置间隔多久才进行一次检测 检测需要关闭的空闲连接 单位ms-->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <!--配置一个连接在池中最小生存的时间 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <property name="validationQuery" value="SELECT 1" />
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <!--打开pscache  指定每个链接上PScache的大小-->
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="20" />
+    </bean>
+
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="typeAliasesPackage" value="com.pojo" />
+        <property name="dataSource" ref="datasource"></property>
+        <property name="mapperLocations" value="classpath:com/mapper/*.xml" />
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <value></value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.mapper" />
+    </bean>
+</beans>

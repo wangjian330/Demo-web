@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserLoginLogMapper">
+    <insert id="add" parameterType="UserLoginLog">
+        insert into UserLoginLog (login_id, user_id, login_time, login_ip)
+        values (#{login_id},#{user_id},#{login_time},#{login_ip})
+    </insert>
+    <select id="get" parameterType="_int" resultType="UserLoginLog">
+        select * from UserLoginLog where id = #{login_id}
+    </select>
+    <select id="list" resultType="UserLoginLog">
+        select * from UserLoginLog order by id desc
+        <if test="start!=null and count!=null">
+            limit #{start},#{count}
+        </if>
+    </select>
+    <select id="total" resultType="int">
+        select * from UserLoginLog
+    </select>
+
+</mapper>
